@@ -3,7 +3,7 @@ Install Postgres on Debian:
 1. sudo apt-get update
 2. sudo apt-get install postgresql postgresql-client
 3. sudo su - postgres
-4. createdb test
+4. createdb book
 5. aptitude search postgresql
 6. sudo apt-get install postgresql-contrib
 7. available extensions: ls /usr/share/postgresql/9.4/extension/
