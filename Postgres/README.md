@@ -28,3 +28,7 @@ Start Postgres
 2. start the PostgreSQL console: psql
 3. stop server: sudo /etc/init.d/postgresql stop
 
+Day 1.
+
+1. Connect to created base: psql book
+2. look to created indexes: \di
