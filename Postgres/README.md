@@ -7,7 +7,7 @@ Install Postgres on Debian:
 5. aptitude search postgresql
 6. sudo apt-get install postgresql-contrib
 7. available extensions: ls /usr/share/postgresql/9.4/extension/
-8. psql
+8. psql book
 9. CREATE EXTENSION tablefunc;
 10. check installed extensions: \dx
 11. CREATE EXTENSION dict_xsyn;
@@ -32,3 +32,4 @@ Day 1.
 
 1. Connect to created base: psql book
 2. look to created indexes: \di
+3. look  list of languages: createlang book --list;
