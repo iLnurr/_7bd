@@ -108,3 +108,16 @@ SELECT * FROM crosstab(
               jan int, feb int, mar int, apr int, may int, jun int,
               jul int, aug int, sep int, oct int, nov int, dec int
               ) ORDER BY year;
+
+-- DZ 2
+SELECT * FROM crosstab(
+                  'SELECT extract(week from starts) AS week, extract(month FROM starts) AS month, extract(DOW FROM starts) AS day, count(*) FROM events
+                GROUP BY month, week, day',
+                  'SELECT generate_series (0,6)'
+              ) AS (
+              week int, month int,
+              mon int, tue int, wed int, thu int, fri int, sat int, sun int
+              ) ORDER BY week;
+
+-- DAY 3
+

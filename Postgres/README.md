@@ -16,9 +16,24 @@ Install Postgres on Debian:
 14. CREATE EXTENSION cube;
 15. check installed extensions: \dx
 16. exit from psql: \q
-17. stop server: sudo /etc/init.d/postgresql stop
+17. listen all addresses: sudo nano /etc/postgresql/9.4/main/postgresl.conf
+change to: listen_addresses = '*'
+18. sudo -u postgres psql book
+19. ALTER USER postgres with encrypted password 'postgres';
+20. sudo nano /etc/postgresql/9.4/main/pg_hba.conf
+change to: local   all         postgres                          trust
+or change to: local   all         postgres                          md5
+trust - anyone who can connect to the server is authorized to access the database
+md5 - password-base authentication
+21. sudo systemctl restart postgresql.service
+22. stop server: sudo /etc/init.d/postgresql stop
 
 ---------------------------------------------
+
+seacrh available gui: aptitude search pgadmin
+install pgadmin: sudo apt-get install pgadmin3
+_____________________________________________
+
 
 On Debian, PostgreSQL is installed with a default user and default database both called postgres.
 
