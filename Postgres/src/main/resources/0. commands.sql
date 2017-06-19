@@ -121,3 +121,50 @@ SELECT * FROM crosstab(
 
 -- DAY 3
 
+SELECT title FROM movies WHERE title ILIKE 'stardust%';
+
+SELECT title FROM movies WHERE title ILIKE 'stardust_%';
+
+-- ! - not, ~ - reg.ex., * - any register
+SELECT count(*) FROM movies WHERE title !~* '^the.*';
+CREATE INDEX movies_title_pattern ON movies (lower(title) TEXT_PATTERN_OPS);
+
+SELECT levenshtein('bat', 'fads');
+SELECT levenshtein('bat', 'fad') fad,
+       levenshtein('bat', 'fat') fat,
+       levenshtein('bat', 'bat') bat;
+SELECT movie_id, title FROM movies
+WHERE levenshtein(lower(title), lower('a hard day nght')) <= 3;
+
+SELECT show_trgm('Avatar');
+CREATE INDEX movies_title_trigram ON movies
+USING GIST (title gist_trgm_ops);
+SELECT * FROM movies WHERE title % 'Avatre';
+
+SELECT title FROM movies WHERE title @@ 'nigth & day';
+SELECT title FROM movies WHERE to_tsvector(title) @@ to_tsquery('english', 'night & day');
+SELECT to_tsvector('A Hard Day''s Night'), to_tsquery('english', 'night & day');
+SELECT * FROM movies WHERE title @@ to_tsquery('english', 'a');
+SELECT to_tsvector('english', 'A Hard Day''s Night');
+SELECT to_tsvector('simple', 'A Hard Day''s Night');
+
+SELECT ts_lexize('english_stem', 'Day''s');
+SELECT to_tsvector('german', 'was macht du gerade?');
+
+EXPLAIN SELECT * FROM movies WHERE title @@ 'night & day';
+CREATE INDEX movies_title_searchable ON movies USING GIN (to_tsvector('english', title));
+EXPLAIN SELECT * FROM movies WHERE to_tsvector('english', title) @@ 'night & day';
+
+SELECT * FROM actors WHERE name = 'Broos Wlis';
+SELECT * FROM actors WHERE name % 'Broos Wlis';
+SELECT * FROM actors WHERE metaphone(name, 6) = metaphone('Broos Wils', 6);
+SELECT title FROM movies NATURAL JOIN movies_actors NATURAL JOIN actors WHERE metaphone(name, 6) = metaphone('Broos Wils', 6);
+SELECT name, dmetaphone(name), dmetaphone_alt(name), metaphone(name, 8), soundex(name) FROM actors;
+
+SELECT genre FROM movies WHERE title='Star Wars';
+SELECT name, cube_ur_coord('(0,7,0,0,0,0,0,0,0,7,0,0,0,0,10,0,0,0)', position) AS score FROM genres g WHERE cube_ur_coord('(0,7,0,0,0,0,0,0,0,7,0,0,0,0,10,0,0,0)', position) > 0;
+SELECT *, cube_distance(genre, '(0,7,0,0,0,0,0,0,0,7,0,0,0,0,10,0,0,0)') dist FROM movies ORDER BY dist;
+SELECT cube_enlarge('(1,1)',1,2);
+SELECT title, cube_distance(genre, '(0,7,0,0,0,0,0,0,0,7,0,0,0,0,10,0,0,0)') dist FROM movies WHERE cube_enlarge('(0,7,0,0,0,0,0,0,0,7,0,0,0,0,10,0,0,0)'::cube, 5, 18) @> genre ORDER BY dist;
+SELECT m.movie_id, m.title FROM movies m, (SELECT genre, title FROM movies WHERE title = 'Mad Max') s WHERE cube_enlarge(s.genre, 5, 18) @> m.genre AND s.title <> m.title ORDER BY cube_distance(m.genre, s.genre) LIMIT 10;
+

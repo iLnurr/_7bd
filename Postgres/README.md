@@ -48,3 +48,7 @@ Day 1.
 1. Connect to created base: psql book
 2. look to created indexes: \di
 3. look  list of languages: createlang book --list;
+
+Day 3.
+1. Список конфигураций текстового поиска: \dF
+2. Список словарей текстового поиска: \dFd
