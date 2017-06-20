@@ -155,8 +155,8 @@ EXPLAIN SELECT * FROM movies WHERE title @@ 'night & day';
 CREATE INDEX movies_title_searchable ON movies USING GIN (to_tsvector('english', title));
 EXPLAIN SELECT * FROM movies WHERE to_tsvector('english', title) @@ 'night & day';
 
-SELECT * FROM actors WHERE name = 'Broos Wlis';
-SELECT * FROM actors WHERE name % 'Broos Wlis';
+SELECT * FROM actors WHERE name = 'Broos Wils';
+SELECT * FROM actors WHERE name % 'Broos Wils';
 SELECT * FROM actors WHERE metaphone(name, 6) = metaphone('Broos Wils', 6);
 SELECT title FROM movies NATURAL JOIN movies_actors NATURAL JOIN actors WHERE metaphone(name, 6) = metaphone('Broos Wils', 6);
 SELECT name, dmetaphone(name), dmetaphone_alt(name), metaphone(name, 8), soundex(name) FROM actors;

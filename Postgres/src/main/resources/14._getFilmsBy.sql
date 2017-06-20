@@ -1,0 +1,3 @@
+CREATE OR REPLACE FUNCTION getFilmsBy(search text) RETURNS SETOF CHARACTER AS $$
+  SELECT title FROM movies WHERE title % search;
+$$ LANGUAGE SQL;
