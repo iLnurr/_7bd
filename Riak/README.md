@@ -25,15 +25,15 @@ Starting Erlang
 ---------------------------------------------
 
 Starting Riak
-1. cd $RIAK
-2. /rel/riak/bin/riak start
+1. cd /home/ilnur/riak-2.2.3/rel/riak/bin/
+2. ./riak start
 
 stop
 1. /rel/riak/bin/riak stop
 _____________________________________________
 
 Starting servers (configured by command $make devrel)
-1. cd $RIAK
+1. cd /home/ilnur/riak-2.2.3/
 2. dev/dev1/bin/riak start
 3. dev/dev2/bin/riak start
 4. dev/dev3/bin/riak start
