@@ -49,3 +49,4 @@ curl -X PUT http://localhost:10018/riak/animals/polly -H "Content-Type: applicat
 curl -i -X POST http://localhost:10018/riak/animals -H "Content-Type: application/pdf" --data-binary @book.pdf
 
 http://localhost:10018/riak/animals/Y6tY5AFok2JwqJpgCelyWSywytc
+
