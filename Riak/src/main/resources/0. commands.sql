@@ -50,3 +50,28 @@ curl -i -X POST http://localhost:10018/riak/animals -H "Content-Type: applicatio
 
 http://localhost:10018/riak/animals/Y6tY5AFok2JwqJpgCelyWSywytc
 
+-- DAY 2
+
+http://localhost:10018/riak/rooms
+
+curl -X POST -H "content-type:application/json" http://localhost:8098/mapred --data "{\"inputs\": [[\"rooms\",\"101\"],[\"rooms\",\"102\"], [\"rooms\",\"103\"] ], \"query\": [{\"map\": {\"language\": \"javascript\", \"source\": \"function(v) {/* From the Riak object, pull data and parse it as JSON */ var parsed_data = JSON.parse(v.values[0].data); var data = {}; /* Key capacity number by room style string */ data[parsed_data.style] = parsed_data.capacity; return [data]; }\"} } ] }"
+
+curl -X POST -H "content-type:application/json" http://localhost:8098/mapred --data @-
+{
+  "inputs":[
+    ["rooms","101"],["rooms","102"],["rooms","103"]],
+  "query":[
+    {"map":{
+      "language":"javascript",
+      "source":
+      "function(v) {
+        var parsed_data = JSON.parse(v.values[0].data);
+        var data = {};
+        var floor = ~~(parseInt(v.key) / 100);
+        data[floor] = parsed_data.capacity;
+        return [data];
+      }"}
+  } ]
+}
+
+Ctrl-D
