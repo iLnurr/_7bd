@@ -75,3 +75,69 @@ curl -X POST -H "content-type:application/json" http://localhost:8098/mapred --d
 }
 
 Ctrl-D
+
+--хранимые функции
+curl -X PUT -H "content-type:application/json" http://localhost:8098/riak/my_functions/map_capacity --data @-
+function(v) {
+        var parsed_data = JSON.parse(v.values[0].data);
+        var data = {};
+        var floor = ~~(parseInt(v.key) / 100);
+        data[floor] = parsed_data.capacity;
+        return [data];
+      }
+
+curl -X POST -H "content-type:application/json" http://localhost:8098/mapred --data @-
+{
+  "inputs":[
+    ["rooms","101"],["rooms","102"],["rooms","103"]
+    ],
+  "query":[
+    {"map":{
+      "language":"javascript",
+      "bucket" : "my_functions",
+      "key" : "map_capacity"
+      }}
+  ]
+}
+
+curl -X POST -H "content-type:application/json" http://localhost:8098/mapred --data @-
+{
+  "inputs":[
+    ["rooms","101"],["rooms","102"],["rooms","103"]
+    ],
+  "query":[
+    {"map":{
+      "language":"javascript",
+      "name" : "Riak.mapValuesJson"
+      }}
+  ]
+}
+
+--reduce
+curl -X POST -H "content-type:application/json" http://localhost:8098/mapred --data @-
+{
+  "inputs":[
+    ["rooms","101"],["rooms","102"],["rooms","103"]],
+  "query":[
+    {"map":{
+      "language":"javascript",
+      "bucket" : "my_functions",
+      "key" : "map_capacity"
+      }},
+  {"reduce": {
+      "language": "javascript",
+      "source":
+        "function(v) {
+            var totals = {};
+            for (var i in v) {
+              for(var style in v[i]) {
+                if( totals[style] )
+                  totals[style] += v[i][style];
+                else
+                  totals[style] = v[i][style];
+              }
+            }
+            return [totals];
+          }"}
+  } ]
+}
