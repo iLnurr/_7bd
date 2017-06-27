@@ -141,3 +141,129 @@ curl -X POST -H "content-type:application/json" http://localhost:8098/mapred --d
           }"}
   } ]
 }
+
+--DZ 2
+
+curl -X POST -H "content-type:application/json" http://localhost:8098/mapred --data @-
+{
+  "inputs":[
+    ["rooms","101"],["rooms","102"],["rooms","103"]],
+  "query":[
+    {"map":{
+      "language":"javascript",
+      "source":
+      "function(v) {
+        var parsed_data = JSON.parse(v.values[0].data);
+        var data = {};
+        var floor = ~~(parseInt(v.key) / 100);
+        data[floor] = parsed_data.capacity;
+        return [data];
+      }"}
+  } ]
+}
+
+curl -X POST -H "content-type:application/json" http://localhost:8098/mapred --data @-
+{
+  "inputs":[
+    ["rooms","101"],["rooms","102"],["rooms","103"]],
+  "query":[
+    {"map":{
+      "language":"javascript",
+      "source":
+      "function(v) {
+        var parsed_data = JSON.parse(v.values[0].data);
+        var data = {};
+        var floor = ~~(parseInt(v.key) / 100);
+        data[floor] = parsed_data.capacity;
+        return [data];
+      }"}
+  },
+  {"reduce": {
+      "language": "javascript",
+      "source":
+        "function(v) {
+            var totals = {};
+            for (var i in v) {
+              for(var floor in v[i]) {
+                if( totals[floor] )
+                  totals[floor] += v[i][floor];
+                else
+                  totals[floor] = v[i][floor];
+              }
+            }
+
+            return [totals];
+          }"}
+  } ]
+}
+
+curl -X POST -H "content-type:application/json" http://localhost:8098/mapred --data @-
+{
+  "inputs":"rooms",
+  "query":[
+    {"map":{
+      "language":"javascript",
+      "source":
+      "function(v) {
+        var parsed_data = JSON.parse(v.values[0].data);
+        var data = {};
+        var floor = ~~(parseInt(v.key) / 100);
+        data[floor] = parsed_data.capacity;
+        return [data];
+      }"}
+  },
+  {"reduce": {
+      "language": "javascript",
+      "source":
+        "function(v) {
+            var totals = {};
+            for (var i in v) {
+              for(var floor in v[i]) {
+                if( totals[floor] )
+                  totals[floor] += v[i][floor];
+                else
+                  totals[floor] = v[i][floor];
+              }
+            }
+
+            return [totals];
+          }"}
+  } ]
+}
+
+curl -X POST -H "content-type:application/json" http://localhost:8098/mapred --data @-
+{
+  "inputs":{
+  "bucket": "rooms",
+  "key_filters": [["string_to_int"], ["between", 4200, 4399]]
+  },
+  "query":[
+    {"map":{
+      "language":"javascript",
+      "source":
+      "function(v) {
+        var parsed_data = JSON.parse(v.values[0].data);
+        var data = {};
+        var floor = ~~(parseInt(v.key) / 100);
+        data[floor] = parsed_data.capacity;
+        return [data];
+      }"}
+  },
+  {"reduce": {
+      "language": "javascript",
+      "source":
+        "function(v) {
+            var totals = {};
+            for (var i in v) {
+              for(var floor in v[i]) {
+                if( totals[floor] )
+                  totals[floor] += v[i][floor];
+                else
+                  totals[floor] = v[i][floor];
+              }
+            }
+
+            return [totals];
+          }"}
+  } ]
+}

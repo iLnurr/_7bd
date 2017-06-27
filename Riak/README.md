@@ -59,3 +59,16 @@ Stop nodes of server
 3. dev/dev3/bin/riak stop
 4. rel/riak/bin/riak stop
 
+_________________________________________
+
+Riak console
+1. cd /home/ubnote/riak-2.2.3/rel/riak/bin/
+2. ./riak console
+or
+2. ./riak attach
+
+_________________________________________
+
+Configure riak.conf
+
+1. Enable search (564): search = on
