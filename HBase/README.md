@@ -122,6 +122,7 @@ ______________________________
 Install HBase on Ubuntu:
 1. wget http://apache-mirror.rbc.ru/pub/apache/hbase/stable/hbase-1.2.6-bin.tar.gz
 2. tar xfz hbase-1.2.6-bin.tar.gz
+3. cd ~
 3. cd hbase-1.2.6
 
 Configuring HBase in Standalone Mode

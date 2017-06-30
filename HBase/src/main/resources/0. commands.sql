@@ -80,3 +80,30 @@ put_many 'wiki', 'Some title', {
   "revision:comment" => "no comment" }
 
 scan 'wiki'
+
+-- DAY 2
+
+disable 'wiki'
+alter 'wiki', { NAME=>'text', COMPRESSION=>'GZ', BLOOMFILTER=>'ROW' }
+enable 'wiki'
+
+--get zip xml dump from wiki unzip it and transfer to our script
+curl https://dumps.wikimedia.org/enwiktionary/latest/enwiktionary-latest-pages-articles.xml.bz2 | bzcat | /home/ubnote/hbase-1.2.6/bin/hbase shell /home/ubnote/IdeaProjects/_7bd/HBase/src/main/resources/import_from_wikipedia.rb
+
+scan 'hbase:meta', { COLUMNS => ['info:server', 'info:regioninfo'] }
+
+describe 'wiki'
+
+create 'links', {
+  NAME => 'to', VERSIONS => 1, BLOOMFILTER => 'ROWCOL'
+}, {
+  NAME => 'from', VERSIONS => 1, BLOOMFILTER => 'ROWCOL'
+}
+
+/home/ubnote/hbase-1.2.6/bin/hbase shell /home/ubnote/IdeaProjects/_7bd/HBase/src/main/resources/generate_wiki_links.rb
+
+scan 'links', STARTROW => "Admiral Ackbar", ENDROW => "It's a Trap"
+
+get 'links', 'Star Wars'
+
+count 'wiki', INTERVAL => 100000, CACHE => 10000
