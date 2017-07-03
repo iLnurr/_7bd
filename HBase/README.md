@@ -150,3 +150,43 @@ HBase Web Interface
 To access the web interface of HBase, type the following url in the browser.
 
 http://localhost:60010
+
+______________________________
+
+DAY 3
+Remote connect to HBASE in Amazon ES using Thrift protocol
+
+1. Запуск службы Thrift: ${HBASE_HOME}/bin/hbase-daemon.sh start thrift -b 127.0.0.1
+2. В качестве клиентского языка выбран Ruby - нужно установить гем пакет: sudo gem install thrift
+3. Check installing of gem thrift: ruby -e "require 'thrift'"
+    If nothing is printed - great!
+
+Install thrift
+1. sudo apt-get install libboost-dev libboost-test-dev libboost-program-options-dev libboost-system-dev libboost-filesystem-dev libevent-dev automake libtool flex bison pkg-config g++ libssl-dev ant
+2. wget http://www.us.apache.org/dist/thrift/0.9.3/thrift-0.9.3.tar.gz
+3. tar -xvf thrift-0.9.3.tar.gz
+4. cd thrift-0.9.3/
+5. ./configure
+6. make
+7. sudo make install
+8. thrift -version
+
+1. git clone https://github.com/apache/hbase.git
+2. cp hbase-thrift to ${HBASE_ROOT}
+
+
+Model generation
+1. thrift --gen rb /home/ubnote/hbase-1.2.6/hbase-thrift/src/main/resources/org/apache/hadoop/hbase/thrift/Hbase.thrift
+
+Run client (script)
+1. ruby /home/ubnote/IdeaProjects/_7bd/HBase/src/main/resources/thrift-example.rb
+
+Attic
+1. Access key from AWS: AKIAJABNFHTLO4ZPB65Q
+2. wget http://archive.apache.org/dist/whirr/whirr-0.8.2/whirr-0.8.2.tar.gz
+3. tar -xvf whirr-0.8.2.tar.gz
+4. cd whirr-0.8.2
+5. ./bin/whirr version
+6. mkdir keys
+7. ssh-keygen -t rsa -P '' -f keys/id_rsa
+9. ./bin/whirr launch-cluster --config hbase.properties
