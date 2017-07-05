@@ -181,7 +181,7 @@ Model generation
 Run client (script)
 1. ruby /home/ubnote/IdeaProjects/_7bd/HBase/src/main/resources/thrift-example.rb
 
-Attic
+Whirr
 1. Access key from AWS:
 2. wget http://archive.apache.org/dist/whirr/whirr-0.8.2/whirr-0.8.2.tar.gz
 3. tar -xvf whirr-0.8.2.tar.gz
