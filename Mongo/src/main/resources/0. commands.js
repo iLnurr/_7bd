@@ -136,3 +136,48 @@ db.countries.find(
     },
     {_id : 1}
 );
+
+db.towns.update(
+    { _id : ObjectId("595b3d35165f21d2b9515943") },
+    { $set : { state : "OR" } }
+);
+
+db.towns.findOne({"_id":ObjectId("595b3d35165f21d2b9515943")});
+
+db.towns.update(
+    { _id : ObjectId("595b3d35165f21d2b9515943") },
+    { $inc : { population : 1000 } }
+);
+
+db.towns.update(
+    { _id : ObjectId("595b3d35165f21d2b9515943") },
+    { $set : { country : { $ref : "countries", $id : "us" } } }
+);
+
+var portland = db.towns.findOne({"_id":ObjectId("595b3d35165f21d2b9515943")});
+db.countries.findOne({ _id : portland.country.$id });
+db[ portland.country.$ref ].findOne({ _id : portland.country.$id });
+
+var bad_bacon = {
+    'exports.foods' : {
+        $elemMatch : {
+            name : 'bacon',
+            tasty : false
+        }
+    }
+};
+db.countries.find( bad_bacon );
+db.countries.remove( bad_bacon );
+db.countries.count();
+
+db.towns.find( function () {
+    return this.population > 6000 && this.population < 600000;
+} );
+db.towns.find( "this.population > 6000 && this.population < 600000;");
+db.towns.find( {
+    $where : "this.population > 6000 && this.population < 600000;",
+    famous_for : /groundhog/
+} );
+
+//DZ 1
+db.towns.find({ name : { $regex : /^new/, $options:"$i" } });
