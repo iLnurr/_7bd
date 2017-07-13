@@ -216,3 +216,60 @@ db.system.profile.find();
 
 db.phones.ensureIndex({ "components.area" : 1}, { background : 1 });
 db.phones.getIndexes();
+
+
+db.phones.count({'components.number' : {$gt : 5599999} });
+
+populatePhones(855, 5550000, 5650000);
+
+db.phones.distinct('components.number', {'components.number' : { $lt : 5550005 } });
+
+db.phones.group({
+    initial : { count : 0 },
+    reduce : function(phone, output) { output.count++; },
+    cond : { 'components.number' : { $gt : 5599999 } },
+    key : { 'components.area' : true }
+});
+
+db.phones.group({
+    initial : { count : 0 },
+    reduce : function(phone, output) { output.count++; },
+    cond : { 'components.number' : { $gt : 5599999 } }
+});
+
+db.phones.group({
+    initial : { prefixes : {} },
+    reduce : function(phone, output) {
+        output.prefixes[phone.components.prefix] = 1;
+    },
+    finalize : function (out) {
+        var ary = [];
+        for (var p in out.prefixes) { ary.push( parseInt( p ) ); }
+        out.prefixes = ary;
+    }
+})[0].prefixes;
+
+update_area = function() {
+    db.phones.find().forEach(
+        function(phone) {
+            phone.components.area++;
+            phone.display = "+"+
+                phone.components.country+" "+
+                phone.components.area+"-"+
+                phone.components.number;
+            db.phone.update({ _id : phone._id }, phone, false);
+        }
+    )
+};
+db.eval(update_area);
+
+// use admin
+db.runCommand("top");
+
+
+// use book
+db.listCommands();
+db.runCommand({ "count" : "phones"  });
+db.phones.count
+db.phones.find().count
+db.runCommand
