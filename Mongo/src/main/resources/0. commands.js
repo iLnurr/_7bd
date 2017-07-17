@@ -273,3 +273,57 @@ db.runCommand({ "count" : "phones"  });
 db.phones.count
 db.phones.find().count
 db.runCommand
+
+
+db.system.js.save({
+    _id : 'getLast',
+    value : function (collection) {
+        return collection.find({}).sort({'_id':1}).limit(1)[0]
+    }
+});
+db.eval('getLast(db.phones)');
+db.loadServerScripts();
+getLast(db.phones);
+
+
+distinctDigits = function(phone){
+    var
+        number = phone.components.number + '',
+        seen = [],
+        result = [],
+        i = number.length;
+    while(i--) {
+        seen[+number[i]] = 1;
+    }
+    for (i=0; i<10; i++) {
+        if (seen[i]) {
+            result[result.length] = i;
+        }
+    }
+    return result;
+};
+db.system.js.save({_id: 'distinctDigits', value: distinctDigits});
+
+db.eval("distinctDigits(db.phones.findOne({ 'components.number' : 5551213 }))");
+
+map = function() {
+    var digits = distinctDigits(this);
+    emit({digits : digits, country : this.components.country}, {count : 1});
+};
+
+reduce = function(key, values) {
+    var total = 0;
+    for(var i=0; i<values.length; i++) {
+        total += values[i].count;
+    }
+    return { count : total };
+};
+
+results = db.runCommand({
+    mapReduce: 'phones',
+    map :map,
+    reduce : reduce,
+    out : 'phones.report'
+});
+db.phones.report.find({'_id.country':8});
+it;
