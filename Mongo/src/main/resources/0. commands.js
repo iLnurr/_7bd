@@ -327,3 +327,33 @@ results = db.runCommand({
 });
 db.phones.report.find({'_id.country':8});
 it;
+
+//DAY 3
+//mongo localhost:27011
+rs.initiate({
+    _id : 'book',
+    members: [
+        {_id: 1, host: 'localhost:27011'},
+        {_id: 2, host: 'localhost:27012'},
+        {_id: 3, host: 'localhost:27013'}
+    ]
+})
+rs.status();
+
+db.echo.insert({say: 'HELLO'});
+
+//CTRL-C in mongo console
+//CTRL-C in mongo1 server terminal
+
+//mongo localhost:27012
+rs.status();
+
+//CTRL-C in mongo console
+//mongo localhost:27013
+rs.status();
+db.isMaster();
+db.echo.insert({say: 'is this thing on?'}); //MESSAGE: WriteResult({ "writeError" : { "code" : 10107, "errmsg" : "not master" } })
+
+
+
+
